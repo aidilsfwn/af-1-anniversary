@@ -33,8 +33,29 @@ export default function App() {
       if (section) observer.observe(section);
     });
 
-    return () => observer.disconnect();
-  }, [showCard]);
+    // Handle visibility change - pause audio when user leaves the app, resume when they come back
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        if (audioRef.current && !audioRef.current.paused) {
+          audioRef.current.pause();
+        }
+      } else {
+        // User came back, resume if it was playing before
+        if (isPlaying && audioRef.current && audioRef.current.paused) {
+          audioRef.current.play().catch((err) => {
+            console.log("Resume failed:", err);
+          });
+        }
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      observer.disconnect();
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, [showCard, isPlaying]);
 
   const toggleMusic = () => {
     if (audioRef.current) {
