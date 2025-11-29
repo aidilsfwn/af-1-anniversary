@@ -160,6 +160,13 @@ export default function App() {
       {/* Fixed controls */}
       <div className="fixed bottom-8 left-0 right-0 z-50 flex justify-between px-6 pointer-events-none">
         <button
+          onClick={downloadPDF}
+          className="bg-white/80 backdrop-blur-sm text-rose-600 p-3.5 rounded-full shadow-md hover:shadow-lg active:scale-95 transition-all pointer-events-auto"
+        >
+          <Download className="w-6 h-6" />
+        </button>
+
+        <button
           onClick={toggleMusic}
           className="bg-white/80 backdrop-blur-sm text-rose-600 p-3.5 rounded-full shadow-md hover:shadow-lg active:scale-95 transition-all pointer-events-auto"
         >
@@ -168,13 +175,6 @@ export default function App() {
           ) : (
             <VolumeX className="w-6 h-6" />
           )}
-        </button>
-
-        <button
-          onClick={downloadPDF}
-          className="bg-white/80 backdrop-blur-sm text-rose-600 p-3.5 rounded-full shadow-md hover:shadow-lg active:scale-95 transition-all pointer-events-auto"
-        >
-          <Download className="w-6 h-6" />
         </button>
       </div>
 
