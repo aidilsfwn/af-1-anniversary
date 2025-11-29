@@ -56,15 +56,20 @@ export default function App() {
   const openCard = () => {
     setShowCard(true);
     setTimeout(() => {
-      const iframe = document.querySelector("iframe");
+      const iframe = document.querySelector("iframe") as HTMLIFrameElement;
       if (iframe?.contentWindow) {
-        iframe.contentWindow.postMessage(
-          '{"event":"command","func":"playVideo","args":""}',
-          "*"
-        );
+        // Try multiple times for iOS Safari compatibility
+        for (let i = 0; i < 3; i++) {
+          setTimeout(() => {
+            iframe.contentWindow?.postMessage(
+              '{"event":"command","func":"playVideo","args":""}',
+              "*"
+            );
+          }, i * 200);
+        }
         setIsPlaying(true);
       }
-    }, 500);
+    }, 800);
   };
 
   const downloadPDF = () => {
@@ -138,8 +143,10 @@ export default function App() {
           width="0"
           height="0"
           src="https://www.youtube.com/embed/gvunApwKIiY?enablejsapi=1&autoplay=0&loop=1&playlist=gvunApwKIiY"
-          allow="autoplay"
+          allow="autoplay; encrypted-media"
+          allowFullScreen
           title="Background Music"
+          style={{ pointerEvents: "none" }}
         />
       </div>
 
