@@ -69,7 +69,7 @@ export default function App() {
 
   const downloadPDF = () => {
     const link = document.createElement("a");
-    link.href = "/src/assets/card.pdf";
+    link.href = "/card.pdf";
     link.download = "Anniversary_Card_Sayang.pdf";
     document.body.appendChild(link);
     link.click();
@@ -193,7 +193,7 @@ export default function App() {
                 {/* Illustration */}
                 <div className="mb-8 mx-auto w-56 h-56 rounded-3xl flex items-center justify-center overflow-hidden shrink-0">
                   <img
-                    src="/src/assets/illos.png"
+                    src="/illos.png"
                     alt="Anniversary illustration"
                     className="w-full h-full object-contain"
                   />
