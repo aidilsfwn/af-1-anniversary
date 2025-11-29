@@ -5,6 +5,7 @@ import { SECTIONS } from "./constants";
 
 export default function App() {
   const sectionsRef = useRef<(HTMLDivElement | null)[]>([]);
+  const audioRef = useRef<HTMLAudioElement>(null);
 
   const [isPlaying, setIsPlaying] = useState(false);
   const [showCard, setShowCard] = useState(false);
@@ -36,18 +37,13 @@ export default function App() {
   }, [showCard]);
 
   const toggleMusic = () => {
-    const iframe = document.querySelector("iframe");
-    if (iframe?.contentWindow) {
+    if (audioRef.current) {
       if (isPlaying) {
-        iframe.contentWindow.postMessage(
-          '{"event":"command","func":"pauseVideo","args":""}',
-          "*"
-        );
+        audioRef.current.pause();
       } else {
-        iframe.contentWindow.postMessage(
-          '{"event":"command","func":"playVideo","args":""}',
-          "*"
-        );
+        audioRef.current.play().catch((err) => {
+          console.log("Play failed:", err);
+        });
       }
       setIsPlaying(!isPlaying);
     }
@@ -55,21 +51,15 @@ export default function App() {
 
   const openCard = () => {
     setShowCard(true);
+    setIsPlaying(true);
     setTimeout(() => {
-      const iframe = document.querySelector("iframe") as HTMLIFrameElement;
-      if (iframe?.contentWindow) {
-        // Try multiple times for iOS Safari compatibility
-        for (let i = 0; i < 3; i++) {
-          setTimeout(() => {
-            iframe.contentWindow?.postMessage(
-              '{"event":"command","func":"playVideo","args":""}',
-              "*"
-            );
-          }, i * 200);
-        }
-        setIsPlaying(true);
+      if (audioRef.current) {
+        audioRef.current.currentTime = 0;
+        audioRef.current.play().catch((err) => {
+          console.log("Play failed:", err);
+        });
       }
-    }, 800);
+    }, 300);
   };
 
   const downloadPDF = () => {
@@ -138,17 +128,9 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-linear-to-br from-rose-50 via-pink-50 to-amber-50">
-      <div className="hidden">
-        <iframe
-          width="0"
-          height="0"
-          src="https://www.youtube.com/embed/gvunApwKIiY?enablejsapi=1&autoplay=0&loop=1&playlist=gvunApwKIiY"
-          allow="autoplay; encrypted-media"
-          allowFullScreen
-          title="Background Music"
-          style={{ pointerEvents: "none" }}
-        />
-      </div>
+      <audio ref={audioRef} loop preload="metadata" style={{ display: "none" }}>
+        <source src="/music.mp3" type="audio/mpeg" />
+      </audio>
 
       {/* Progress indicator */}
       <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50 flex gap-2 bg-white/80 backdrop-blur-sm rounded-full px-4 py-3 shadow-md">
